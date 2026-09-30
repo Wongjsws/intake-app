@@ -358,6 +358,13 @@ async function loadProducts(slug){
  list.innerHTML=h||'<div class="dim">no products yet</div>';
  if(live)for(const im of list.querySelectorAll('img.pthumb[data-aid]'))
   thumbURL(slug,im.dataset.aid).then(u=>{if(u)im.src=u;});
+ // auto-assign: poster defaults to first page with <2 products
+ const counts={};
+ for(const r of rows){const p=parseInt(r.page);
+  if(!isNaN(p))counts[p]=(counts[p]||0)+1;}
+ let pg=1;while(counts[pg]>=2)pg++;
+ const pin=document.querySelector('[name=poster]');
+ if(pin)pin.value=pg;
 }
 $('csel').onchange=()=>loadProducts($('csel').value);
 
