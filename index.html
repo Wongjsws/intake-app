@@ -90,6 +90,41 @@ details.more>summary{list-style:none;cursor:pointer;color:var(--link);
  transition:opacity .12s}
 details.more>summary:active{opacity:.55}
 details.more>summary::-webkit-details-marker{display:none}
+details.camp{background:var(--card);border-radius:14px;
+ box-shadow:var(--shadow-card);margin:12px 0;overflow:hidden}
+details.camp>summary{cursor:pointer;list-style:none;padding:16px;
+ font-size:17px;position:relative}
+details.camp>summary::-webkit-details-marker{display:none}
+details.camp>summary::after{content:"›";position:absolute;right:16px;
+ top:50%;transform:translateY(-50%) rotate(90deg);color:var(--ph);
+ font-size:20px;transition:transform .35s var(--ease-sheet)}
+details.camp[open]>summary::after{transform:translateY(-50%) rotate(-90deg)}
+details.camp>summary b{display:block;font-weight:600}
+details.camp>summary small{color:var(--sub);font-size:13px}
+details.camp .inner{border-top:.5px solid var(--sep);padding:6px 16px 14px}
+.plist{font-size:14px;line-height:1.6}
+.plist .pg{font-size:12px;font-weight:700;color:var(--sub);
+ text-transform:uppercase;letter-spacing:.05em;margin-top:12px}
+.plist .dim{color:var(--sub);padding:8px 0}
+.prow{display:flex;align-items:center;gap:12px;padding:9px 0;
+ border-bottom:.5px solid var(--sep);color:var(--text);
+ text-decoration:none;min-height:56px}
+.prow:last-child{border-bottom:0}
+.prow:active{background:rgba(120,120,128,.10)}
+.pthumb{width:46px;height:46px;border-radius:9px;object-fit:contain;
+ background:var(--nested);flex-shrink:0;
+ box-shadow:0 0 0 .5px rgba(0,0,0,.06)}
+.pnone{display:flex;align-items:center;justify-content:center;
+ color:var(--ph);font-size:18px}
+.prow .pn{flex:1;min-width:0}
+.prow .pn b{display:block;font-size:14px;font-weight:500;line-height:1.25;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow .pn small{display:block;color:var(--sub);font-size:12px;margin-top:1px}
+.prow .pp{font-size:14px;font-weight:600;white-space:nowrap}
+.prow .chev{color:var(--ph);font-size:18px;margin-left:2px}
+.newtag{display:inline-block;background:var(--accent);color:var(--accent-t);
+ font-size:10px;font-weight:700;border-radius:5px;padding:1px 6px;
+ vertical-align:1px}
 .banner{display:none;margin:14px 0;padding:11px 15px;border-radius:12px;
  background:var(--bannerbg);color:var(--bannert);font-size:14px;
  font-weight:500;box-shadow:0 0 0 .5px rgba(0,0,0,.04)}
@@ -147,7 +182,11 @@ a{color:var(--link);text-decoration:none}
 <input name="campaign_txt" id="ctx" style="display:none"
  placeholder="campaign slug e.g. ekoway-member-day-v2"
  autocapitalize="none" autocorrect="off" spellcheck="false"></div>
-</div></div>
+</div>
+<details class="camp" id="pwrap"><summary><b>Products in this campaign</b>
+<small id="psum">—</small></summary><div class="inner plist" id="plist">
+<div class="dim">Mac offline — list unavailable</div></div></details>
+</div>
 
 <div class="sec"><div class="settl">Photos</div>
 <div class="card">
@@ -265,7 +304,64 @@ async function loadCamps(){
  }else{
   sel.style.display='none';ctx.style.display='block';
   ctx.name='campaign';ctx.value=localStorage.getItem(LASTC)||'';
- }}
+ }
+ loadProducts(sel.style.display==='none'?ctx.value:sel.value);}
+
+// ---------- products browser ----------
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
+ .replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+let _thumbCache={};
+async function thumbURL(c,aid){
+ const k=c+'/'+aid;
+ if(_thumbCache[k])return _thumbCache[k];
+ try{const r=await fetch(`${API}/asset?c=${c}&id=${aid}`,
+   {headers:{'x-intake-key':KEY}});
+  if(!r.ok)return null;
+  const u=URL.createObjectURL(await r.blob());
+  _thumbCache[k]=u;return u;}catch(e){return null;}}
+async function loadProducts(slug){
+ if(!slug)return;
+ const list=$('plist'),sum=$('psum');
+ let rows=null,live=false;
+ try{const r=await fetch(`${API}/api/products?c=${encodeURIComponent(slug)}`,
+   {headers:{'x-intake-key':KEY},cache:'no-store'});
+  if(r.ok){rows=await r.json();live=true;
+   localStorage.setItem('ek-prod-'+slug,JSON.stringify(
+    {ts:Date.now(),rows}));}}catch(e){}
+ if(!rows){const c=localStorage.getItem('ek-prod-'+slug);
+  if(c){try{rows=JSON.parse(c).rows;}catch(e){}
+   sum.textContent='cached — Mac offline';}}
+ if(!rows){list.innerHTML='<div class="dim">Mac offline — list unavailable'+
+  ' (open once while it\'s on to cache)</div>';sum.textContent='offline';return;}
+ if(live)sum.textContent=rows.length+' product(s)';
+ const grp={};
+ for(const r of rows)(grp[r.page||'?']=grp[r.page||'?']||[]).push(r);
+ const kfn=p=>{const n=parseInt(p);return isNaN(n)?[1,p]:[0,n];};
+ let h='';
+ for(const pg of Object.keys(grp).sort((a,b)=>{
+   const A=kfn(a),B=kfn(b);return A[0]-B[0]||String(A[1]).localeCompare(B[1]);})){
+  h+=`<div class="pg">POSTER ${esc(pg)}</div>`;
+  for(const r of grp[pg]){
+   const meta=`RM${esc(r.price)}${esc(r.unit)}`;
+   const sub=[r.bulk?`bulk ${esc(r.bulk)}`:'',
+    r.former?`was RM${esc(r.former)}`:'',
+    r.src==='intake'?'<span class="newtag">new</span>':''
+    ].filter(Boolean).join(' · ');
+   const thumb=r.aid?
+    `<img class="pthumb" data-aid="${esc(r.aid)}">`:
+    `<div class="pthumb pnone">–</div>`;
+   const inner=`${thumb}<span class="pn"><b>${esc(r.name)}</b>`+
+    `<small>${sub}</small></span><span class="pp">${meta}</span>`;
+   h+=live?
+    `<a class="prow" href="${API}/product/edit?key=${KEY}`+
+    `&amp;c=${slug}&amp;e=${r.eid}">${inner}<span class="chev">›</span></a>`:
+    `<div class="prow">${inner}</div>`;
+  }}
+ list.innerHTML=h||'<div class="dim">no products yet</div>';
+ if(live)for(const im of list.querySelectorAll('img.pthumb[data-aid]'))
+  thumbURL(slug,im.dataset.aid).then(u=>{if(u)im.src=u;});
+}
+$('csel').onchange=()=>loadProducts($('csel').value);
 
 // ---------- offline queue (same algorithm as the tailnet app) ----------
 const DB='ekoway-intake',STORE='queue';
@@ -378,7 +474,7 @@ $('f').onsubmit=async e=>{
   if(s.textContent==='Tap to change')s.textContent=
    s.closest('.photorow').querySelector('input').name==='photo'?
    'Camera or gallery':'Optional — fills name & price for you';
- drain();
+ drain();loadProducts(item.fields.campaign);
 };
 
 badge();netStatus();loadCamps();drain();
