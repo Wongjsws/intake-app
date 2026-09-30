@@ -1,0 +1,5 @@
+{"name":"EKOWAY Product Intake","short_name":"EKOWAY Intake",
+"display":"standalone","start_url":"./","scope":"./",
+"background_color":"#111111","theme_color":"#FFD21F",
+"icons":[{"src":"icon.png","sizes":"512x512","type":"image/png",
+"purpose":"any"}]}

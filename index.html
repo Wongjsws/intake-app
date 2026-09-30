@@ -1,0 +1,387 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<title>EKOWAY Product Intake</title>
+<style>
+:root{
+ --bg:#F2F2F7;--card:#FFFFFF;--nested:#F2F2F7;--sep:rgba(60,60,67,.18);
+ --text:#1D1D1F;--sub:rgba(60,60,67,.6);--ph:rgba(60,60,67,.35);
+ --accent:#FFD21F;--accent-t:#111111;--link:#007AFF;
+ --danger:#FF3B30;--ok:#34C759;--okbg:#E9F9EE;--errbg:#FDEBEA;
+ --bannerbg:#FFF4C2;--bannert:#6B5B00;
+ --shadow-card:0 0 0 .5px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.04),
+  0 8px 24px rgba(0,0,0,.06);
+ --shadow-float:0 0 0 .5px rgba(0,0,0,.06),0 2px 5px rgba(0,0,0,.07),
+  0 16px 40px rgba(0,0,0,.10);
+ --ease-press:cubic-bezier(.2,.8,.2,1);--ease-sheet:cubic-bezier(.32,.72,0,1);
+ --ease-pop:cubic-bezier(.34,1.56,.64,1)}
+@media (prefers-color-scheme:dark){
+ :root{
+  --bg:#000000;--card:#1C1C1E;--nested:#2C2C2E;--sep:rgba(84,84,88,.5);
+  --text:#FFFFFF;--sub:rgba(235,235,245,.6);--ph:rgba(235,235,245,.35);
+  --accent:#FFD21F;--accent-t:#111111;--link:#0A84FF;
+  --danger:#FF453A;--ok:#30D158;--okbg:#0C2B16;--errbg:#3A1512;
+  --bannerbg:#332D0B;--bannert:#FFE89B;
+  --shadow-card:0 0 0 .5px rgba(255,255,255,.10);
+  --shadow-float:0 0 0 .5px rgba(255,255,255,.14),0 12px 32px rgba(0,0,0,.45)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+html{touch-action:manipulation}
+body{margin:0;background:var(--bg);color:var(--text);max-width:520px;
+ margin:auto;padding:0 16px calc(96px + env(safe-area-inset-bottom)) 16px;
+ overscroll-behavior:none;font-size:17px;letter-spacing:-.022em;
+ -webkit-font-smoothing:antialiased}
+.hdr{padding:30px 0 12px}
+.brandmark{display:inline-flex;align-items:center;justify-content:center;
+ width:40px;height:40px;border-radius:11px;background:var(--accent);
+ color:var(--accent-t);font-weight:800;font-size:21px;margin-bottom:12px;
+ box-shadow:inset 0 .5px 0 rgba(255,255,255,.45),0 3px 10px rgba(0,0,0,.14);
+ animation:pop .5s var(--ease-pop) both}
+.ttl{font-size:34px;font-weight:700;letter-spacing:-.01em;line-height:1.06}
+.sub{font-size:15px;color:var(--sub);margin-top:4px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:99px;
+ margin-right:6px;vertical-align:1px}
+.dot.on{background:var(--ok)}.dot.off{background:var(--danger)}
+.sec{margin-top:22px;animation:rise .38s var(--ease-sheet) both}
+.sec:nth-of-type(2){animation-delay:.05s}.sec:nth-of-type(3){animation-delay:.1s}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}
+ to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+.settl{font-size:13px;font-weight:600;letter-spacing:.04em;
+ text-transform:uppercase;color:var(--sub);margin:0 16px 6px}
+.secfoot{font-size:13px;color:var(--sub);margin:6px 16px 0;line-height:1.35}
+.card{background:var(--card);border-radius:14px;overflow:hidden;
+ box-shadow:var(--shadow-card)}
+.field{padding:13px 16px;border-bottom:.5px solid var(--sep);position:relative}
+.field:last-child{border-bottom:0}
+.field:focus-within{background:color-mix(in srgb,var(--link) 4%,var(--card))}
+.field label{display:block;font-size:13px;color:var(--sub);margin-bottom:3px;
+ font-weight:500}
+.field input,.field select{width:100%;padding:4px 0;font-size:17px;border:0;
+ background:transparent;color:var(--text);outline:none;letter-spacing:-.022em}
+.field input::placeholder{color:var(--ph)}
+input,select{font-family:inherit}
+.photorow{display:flex;align-items:center;gap:14px;padding:14px 16px;
+ min-height:68px;cursor:pointer;border-bottom:.5px solid var(--sep);
+ transition:background .12s var(--ease-press),transform .12s var(--ease-press)}
+.photorow:last-child{border-bottom:0}
+.photorow:active{background:rgba(120,120,128,.12);transform:scale(.985)}
+.photorow .ic{width:46px;height:46px;border-radius:12px;
+ background:var(--accent);display:flex;align-items:center;
+ justify-content:center;font-size:22px;flex-shrink:0;
+ box-shadow:inset 0 .5px 0 rgba(255,255,255,.4),0 2px 6px rgba(0,0,0,.10)}
+.photorow .tx{flex:1;min-width:0}
+.photorow .tx b{display:block;font-size:17px;font-weight:500}
+.photorow .tx small{color:var(--sub);font-size:13px}
+.photorow .thumb{width:54px;height:54px;object-fit:contain;
+ background:var(--nested);border-radius:10px;display:none;
+ box-shadow:0 0 0 .5px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.12);
+ animation:pop .28s var(--ease-pop)}
+details.more{margin-top:10px}
+details.more>summary{list-style:none;cursor:pointer;color:var(--link);
+ font-size:15px;padding:10px 16px;text-align:center;font-weight:500;
+ transition:opacity .12s}
+details.more>summary:active{opacity:.55}
+details.more>summary::-webkit-details-marker{display:none}
+.banner{display:none;margin:14px 0;padding:11px 15px;border-radius:12px;
+ background:var(--bannerbg);color:var(--bannert);font-size:14px;
+ font-weight:500;box-shadow:0 0 0 .5px rgba(0,0,0,.04)}
+.banner.on{display:block;animation:rise .3s var(--ease-sheet) both}
+.submitbar{position:sticky;bottom:0;margin:22px -16px 0;
+ padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+ background:color-mix(in srgb,var(--bg) 78%,transparent);
+ -webkit-backdrop-filter:blur(20px) saturate(180%);
+ backdrop-filter:blur(20px) saturate(180%);
+ border-top:.5px solid var(--sep)}
+button{width:100%;padding:15px;font-size:17px;font-weight:600;
+ letter-spacing:-.02em;border:0;border-radius:14px;cursor:pointer;
+ background:var(--accent);color:var(--accent-t);
+ box-shadow:inset 0 .5px 0 rgba(255,255,255,.45),inset 0 -1px 0 rgba(0,0,0,.08),
+  0 4px 14px rgba(0,0,0,.14);
+ transition:transform .12s var(--ease-press),opacity .12s,box-shadow .12s}
+button:active{transform:scale(.965);opacity:.92}
+button[disabled]{opacity:.45;transform:none}
+#ok{display:none;margin:14px 0;padding:13px 15px;background:var(--okbg);
+ color:var(--ok);border-radius:12px;font-size:15px;font-weight:600;
+ box-shadow:0 0 0 .5px rgba(52,199,89,.25)}
+#ok.on{display:block;animation:pop .4s var(--ease-pop) both}
+#err{display:none;margin:14px 0;padding:13px 15px;background:var(--errbg);
+ color:var(--danger);border-radius:12px;font-size:15px;font-weight:500;
+ box-shadow:0 0 0 .5px rgba(255,59,48,.2)}
+.meta{font-size:13px;color:var(--sub);margin:10px 2px;line-height:1.5}
+a{color:var(--link);text-decoration:none}
+.req::after{content:" *";color:var(--danger)}
+::selection{background:var(--accent)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;
+ transition:none!important}}
+</style></head><body>
+
+<div class="hdr"><div class="brandmark">E</div><div class="ttl">EKOWAY</div>
+<div class="sub">Product intake · <span id="netst"><span class="dot off">
+</span>checking…</span></div></div>
+<div class="banner" id="q" role="status"></div>
+
+<div class="sec" id="keycard" style="display:none">
+<div class="settl">Setup (once per phone)</div>
+<div class="card">
+<div class="field"><label class="req">Access key</label>
+<input id="keyin" placeholder="paste the key — stays on this phone"
+ autocapitalize="none" autocorrect="off" spellcheck="false"></div>
+</div>
+<div class="submitbar"><button id="keybtn">Save key</button></div>
+</div>
+
+<form id="f" enctype="multipart/form-data" style="display:none">
+
+<div class="sec"><div class="settl">Campaign</div>
+<div class="card">
+<div class="field"><label class="req">Campaign</label>
+<select name="campaign" id="csel"></select>
+<input name="campaign_txt" id="ctx" style="display:none"
+ placeholder="campaign slug e.g. ekoway-member-day-v2"
+ autocapitalize="none" autocorrect="off" spellcheck="false"></div>
+</div></div>
+
+<div class="sec"><div class="settl">Photos</div>
+<div class="card">
+<label class="photorow"><span class="ic">📷</span><span class="tx">
+<b>Product photo *</b><small>Camera or gallery</small></span>
+<img class="thumb" id="prev"><input name="photo" type="file"
+ accept="image/*" style="display:none"></label>
+<label class="photorow"><span class="ic">🏷</span><span class="tx">
+<b>Shelf / price tag</b><small>Optional — fills name &amp; price for you</small>
+</span><img class="thumb" id="prev2"><input name="tag_photo" type="file"
+ accept="image/*" style="display:none"></label>
+</div>
+<div class="secfoot">With a tag photo, name and price can be left blank —
+they get read from the tag.</div></div>
+
+<div class="sec"><div class="settl">Product</div>
+<div class="card">
+<div class="field"><label class="req">Product name</label>
+<input name="name" placeholder="QUALITY STEEL SHOVEL"
+ autocapitalize="words" autocorrect="off" spellcheck="false"
+ enterkeyhint="next"></div>
+<div class="field"><label class="req">Member price (RM)</label>
+<input name="member_price" type="text" inputmode="decimal"
+ placeholder="9.90" autocomplete="off" autocorrect="off"
+ autocapitalize="none" spellcheck="false" enterkeyhint="next"></div>
+<div class="field"><label class="req">Variations needed</label>
+<input name="variations" type="text" inputmode="numeric" required
+ placeholder="e.g. 3" autocomplete="off" enterkeyhint="next"></div>
+<div class="field"><label>Poster / page</label>
+<input name="poster" type="text" inputmode="numeric" placeholder="e.g. 3"
+ autocomplete="off" enterkeyhint="done"></div>
+</div></div>
+
+<details class="more"><summary>More details (optional) — unit, bulk,
+ was-price, SKU</summary>
+<div class="card">
+<div class="field"><label>Unit</label><input name="unit" placeholder="/pc"></div>
+<div class="field"><label>Bulk offer price (RM)</label>
+<input name="bulk_price" type="text" inputmode="decimal" placeholder="6.90"
+ autocomplete="off"></div>
+<div class="field"><label>Bulk quantity</label>
+<input name="bulk_quantity" placeholder="DOZ"></div>
+<div class="field"><label>Normal / was price (RM)</label>
+<input name="former_price" type="text" inputmode="decimal"
+ placeholder="16.90" autocomplete="off"></div>
+<div class="field"><label>SKU / barcode</label>
+<input name="sku" placeholder="S501TY" autocorrect="off"
+ autocapitalize="characters" spellcheck="false"></div>
+</div></details>
+
+<div id="ok" role="alert"></div><div id="err" role="alert"></div>
+<div class="submitbar"><button type="submit" id="sbtn">Submit Product</button>
+</div>
+<div class="meta">Submissions are saved on this phone first and reach the
+system the moment the Mac is awake — it never needs to stay on.
+<a href="#" id="rekey">change access key</a></div>
+</form>
+
+<script>
+// the always-on shell: static on GitHub Pages; the API lives on the Mac's
+// tailnet — only reachable when the Mac is awake. Until then, submissions
+// queue in IndexedDB ON THE PHONE and drain automatically.
+const API='https://justdothis.tail28ccf1.ts.net';
+const $=id=>document.getElementById(id);
+const KEYL='ek-key',CAMPL='ek-camps',LASTC='ek-last-camp';
+let KEY=localStorage.getItem(KEYL)||'';
+
+// ---------- key gate ----------
+function keyGate(){
+ $('keycard').style.display=KEY?'none':'block';
+ $('f').style.display=KEY?'block':'none';}
+$('keybtn').onclick=()=>{const v=$('keyin').value.trim();
+ if(!v)return;KEY=v;localStorage.setItem(KEYL,v);keyGate();loadCamps();};
+$('rekey').onclick=e=>{e.preventDefault();
+ const v=prompt('Access key:',KEY)||'';if(!v)return;
+ KEY=v.trim();localStorage.setItem(KEYL,KEY);loadCamps();};
+keyGate();
+
+// ---------- photo previews ----------
+function wirePhoto(name,imgId){
+ const inp=document.querySelector(`[name=${name}]`),im=$(imgId);
+ inp.onchange=()=>{const f=inp.files[0];
+  if(f){im.src=URL.createObjectURL(f);im.style.display='block';
+   inp.closest('.photorow').querySelector('small').textContent='Tap to change';}
+ };}
+wirePhoto('photo','prev');wirePhoto('tag_photo','prev2');
+
+// ---------- reachability ----------
+async function reachable(){try{
+ const r=await fetch(API+'/health',{cache:'no-store'});return r.ok;
+}catch(e){return false;}}
+async function netStatus(){
+ const on=await reachable();
+ $('netst').innerHTML=on
+  ?'<span class="dot on"></span>Mac online — delivers instantly'
+  :'<span class="dot off"></span>Mac offline — saves on this phone';
+ return on;}
+
+// ---------- campaigns ----------
+async function loadCamps(){
+ const sel=$('csel'),ctx=$('ctx');
+ let camps=null;
+ try{const r=await fetch(API+'/api/campaigns',
+   {headers:{'x-intake-key':KEY},cache:'no-store'});
+  if(r.ok)camps=await r.json();}catch(e){}
+ if(!camps){try{camps=JSON.parse(localStorage.getItem(CAMPL)||'null');}catch(e){}}
+ if(camps&&camps.length){
+  localStorage.setItem(CAMPL,JSON.stringify(camps));
+  sel.innerHTML=camps.map(c=>
+   `<option value="${c.slug}">${c.name}${c.date?' · '+c.date:''} `+
+   `(${c.products} products)</option>`).join('');
+  sel.style.display='block';ctx.style.display='none';ctx.name='';
+  const last=localStorage.getItem(LASTC);
+  if(last&&camps.some(c=>c.slug===last))sel.value=last;
+ }else{
+  sel.style.display='none';ctx.style.display='block';
+  ctx.name='campaign';ctx.value=localStorage.getItem(LASTC)||'';
+ }}
+
+// ---------- offline queue (same algorithm as the tailnet app) ----------
+const DB='ekoway-intake',STORE='queue';
+let _db=null;
+function db(){if(_db)return Promise.resolve(_db);
+ return new Promise((res,rej)=>{const r=indexedDB.open(DB,1);
+  r.onupgradeneeded=()=>r.result.createObjectStore(STORE,{autoIncrement:true});
+  r.onsuccess=()=>{_db=r.result;_db.onclose=()=>{_db=null};res(_db);};
+  r.onerror=()=>rej(r.error);});}
+async function withDb(fn){try{return await fn(await db());}
+ catch(e){_db=null;return await fn(await db());}}
+async function queue(item){
+ item.photo={buf:await item.photo.arrayBuffer(),type:item.photo.type};
+ if(item.tag)item.tag={buf:await item.tag.arrayBuffer(),type:item.tag.type};
+ let key;
+ await withDb(d=>new Promise((res,rej)=>{
+  const t=d.transaction(STORE,'readwrite');
+  const rq=t.objectStore(STORE).add(item);
+  rq.onsuccess=()=>{key=rq.result};t.oncomplete=res;
+  t.onerror=()=>rej(t.error);}));
+ const ok=await withDb(d=>new Promise(res=>{
+  const rq=d.transaction(STORE,'readonly').objectStore(STORE).get(key);
+  rq.onsuccess=()=>res(!!rq.result);rq.onerror=()=>res(false);}));
+ if(!ok)throw new Error('queue write failed');
+ badge();}
+async function pending(){return withDb(d=>new Promise(res=>{
+ const rq=d.transaction(STORE,'readonly').objectStore(STORE).count();
+ rq.onsuccess=()=>res(rq.result);rq.onerror=()=>res(0);}));}
+async function badge(){const n=await pending();
+ const q=$('q');
+ if(q){q.textContent=n?`⏳ ${n} product(s) saved on this phone — `+
+  `syncs automatically when the Mac is awake`:'';
+  q.classList.toggle('on',n>0);}
+ if('setAppBadge'in navigator){try{navigator.setAppBadge(n)}catch(e){}}}
+async function drain(){
+ if(!(await reachable()))return;
+ const [all,keys]=await withDb(d=>Promise.all([
+  new Promise(res=>{const rq=d.transaction(STORE,'readonly')
+   .objectStore(STORE).getAll();
+   rq.onsuccess=()=>res(rq.result||[]);rq.onerror=()=>res([]);}),
+  new Promise(res=>{const rq=d.transaction(STORE,'readonly')
+   .objectStore(STORE).getAllKeys();
+   rq.onsuccess=()=>res(rq.result||[]);rq.onerror=()=>res([]);})]));
+ let sent=0;
+ for(let i=0;i<all.length;i++){
+  const it=all[i];
+  try{const fd=new FormData();
+   for(const[k,v]of Object.entries(it.fields))fd.append(k,v);
+   fd.append('photo',new Blob([it.photo.buf],{type:it.photo.type}),'p.jpg');
+   if(it.tag)fd.append('tag_photo',
+    new Blob([it.tag.buf],{type:it.tag.type}),'tag.jpg');
+   const r=await fetch(API+'/submit',{method:'POST',body:fd,
+    headers:{'x-intake-key':KEY}});
+   if(!r.ok)break;
+   await withDb(d=>new Promise(res=>{
+    const t=d.transaction(STORE,'readwrite');
+    t.objectStore(STORE).delete(keys[i]);
+    t.oncomplete=res;t.onerror=res;}));
+   sent++;}catch(e){break;}
+ }
+ if(sent){const ok=$('ok');
+  ok.textContent='✓ '+sent+' queued product(s) just delivered.';
+  ok.classList.add('on');}
+ badge();}
+window.addEventListener('online',drain);
+document.addEventListener('visibilitychange',
+ ()=>{if(document.visibilityState==='visible'){netStatus();drain();}});
+setInterval(()=>{netStatus();},30000);
+setInterval(drain,30000);
+
+// ---------- submit ----------
+$('f').onsubmit=async e=>{
+ e.preventDefault();
+ const ok=$('ok'),er=$('err'),btn=$('sbtn');
+ ok.classList.remove('on');er.style.display='none';
+ const item={fields:{uuid:crypto.randomUUID()},photo:null,tag:null};
+ for(const[k,v]of new FormData(e.target).entries()){
+  if(v instanceof File){if(v.size){if(k==='photo')item.photo=v;else if(k==='tag_photo')item.tag=v;}}
+  else item.fields[k]=v;}
+ item.fields.campaign=item.fields.campaign||item.fields.campaign_txt||'';
+ delete item.fields.campaign_txt;
+ if(!item.fields.campaign){er.textContent='Campaign required.';
+  er.style.display='block';return;}
+ if(!item.photo){er.textContent='Photo required.';er.style.display='block';return;}
+ btn.disabled=true;btn.textContent='Saving…';
+ try{
+  const fd=new FormData();for(const[k,v]of Object.entries(item.fields))fd.append(k,v);
+  fd.append('photo',item.photo);
+  if(item.tag)fd.append('tag_photo',item.tag);
+  const r=await fetch(API+'/submit',{method:'POST',body:fd,
+   headers:{'x-intake-key':KEY}});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(j.detail||'rejected');
+  localStorage.setItem(LASTC,item.fields.campaign);
+  ok.textContent='✓ Saved as '+j.asset_id+' — next product ready.';
+  ok.classList.add('on');
+ }catch(ex){
+  try{await queue(item);
+   localStorage.setItem(LASTC,item.fields.campaign);
+   ok.textContent='✓ Saved on this phone — syncs when the Mac is awake.';
+   ok.classList.add('on');
+  }catch(qe){er.textContent='Could not save on this phone: '+qe.message;
+   er.style.display='block';}
+ }
+ btn.disabled=false;btn.textContent='Submit Product';
+ e.target.reset();loadCamps();
+ for(const id of['prev','prev2']){const im=$(id);
+  im.src='';im.style.display='none';}
+ for(const s of document.querySelectorAll('.photorow small'))
+  if(s.textContent==='Tap to change')s.textContent=
+   s.closest('.photorow').querySelector('input').name==='photo'?
+   'Camera or gallery':'Optional — fills name & price for you';
+ drain();
+};
+
+badge();netStatus();loadCamps();drain();
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();
+</script></body></html>
