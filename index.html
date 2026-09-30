@@ -212,9 +212,6 @@ they get read from the tag.</div></div>
 <input name="member_price" type="text" inputmode="decimal"
  placeholder="9.90" autocomplete="off" autocorrect="off"
  autocapitalize="none" spellcheck="false" enterkeyhint="next"></div>
-<div class="field"><label class="req">Variations needed</label>
-<input name="variations" type="text" inputmode="numeric" required
- placeholder="e.g. 3" autocomplete="off" enterkeyhint="next"></div>
 <div class="field"><label>Poster / page</label>
 <input name="poster" type="text" inputmode="numeric" placeholder="e.g. 3"
  autocomplete="off" enterkeyhint="done"></div>
@@ -297,7 +294,8 @@ async function loadCamps(){
   localStorage.setItem(CAMPL,JSON.stringify(camps));
   sel.innerHTML=camps.map(c=>
    `<option value="${c.slug}">${c.name}${c.date?' · '+c.date:''} `+
-   `(${c.products} products)</option>`).join('');
+   `(${c.products} products${c.variations?` · ${c.variations} vars`:''})`+
+   `</option>`).join('');
   sel.style.display='block';ctx.style.display='none';ctx.name='';
   const last=localStorage.getItem(LASTC);
   if(last&&camps.some(c=>c.slug===last))sel.value=last;
