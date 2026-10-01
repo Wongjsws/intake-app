@@ -153,12 +153,13 @@ button[disabled]{opacity:.45;transform:none}
 .meta{font-size:13px;color:var(--sub);margin:10px 2px;line-height:1.5}
 a{color:var(--link);text-decoration:none}
 .req::after{content:" *";color:var(--danger)}
-.pgstep{display:flex;align-items:center;gap:8px}
+.pgstep{display:flex;align-items:stretch;gap:8px}
 .pgstep input{flex:1;text-align:center;min-width:0;font-variant-numeric:tabular-nums}
-.stp{flex-shrink:0;width:38px;height:34px;padding:0;border-radius:10px;
- background:var(--nested);color:var(--text);font-size:20px;font-weight:600;
+.stpcol{display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+.stp{width:44px;flex:1;padding:2px 0 4px;border-radius:10px;
+ background:var(--nested);color:var(--text);font-size:12px;font-weight:600;
  line-height:1;box-shadow:inset 0 0 0 .5px var(--sep)}
-.stp:active{transform:scale(.92)}
+.stp:active{transform:scale(.9)}
 ::selection{background:var(--accent)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;
  transition:none!important}}
@@ -223,10 +224,10 @@ they get read from the tag.</div></div>
  placeholder="16.90" autocomplete="off" autocorrect="off"
  autocapitalize="none" spellcheck="false" enterkeyhint="next"></div>
 <div class="field"><label>Poster / page</label>
-<div class="pgstep"><button type="button" class="stp" data-d="-1">−</button>
-<input name="poster" type="text" inputmode="numeric" placeholder="e.g. 3"
- autocomplete="off" enterkeyhint="done">
-<button type="button" class="stp" data-d="1">+</button></div></div>
+<div class="pgstep"><input name="poster" type="text" inputmode="numeric"
+ placeholder="e.g. 3" autocomplete="off" enterkeyhint="done">
+<div class="stpcol"><button type="button" class="stp" data-d="1">▲</button>
+<button type="button" class="stp" data-d="-1">▼</button></div></div></div>
 </div></div>
 
 <details class="more"><summary>More details (optional) — unit, bulk,
@@ -280,7 +281,7 @@ function wirePhoto(name,imgId){
  };}
 wirePhoto('photo','prev');wirePhoto('tag_photo','prev2');
 for(const b of document.querySelectorAll('.stp'))b.onclick=()=>{
- const i=b.parentElement.querySelector('input');
+ const i=b.closest('.pgstep').querySelector('input');
  i.value=Math.max(1,(parseInt(i.value)||0)+parseInt(b.dataset.d));};
 
 // ---------- reachability ----------
