@@ -32,7 +32,7 @@
   --shadow-card:0 0 0 .5px rgba(255,255,255,.10);
   --shadow-float:0 0 0 .5px rgba(255,255,255,.14),0 12px 32px rgba(0,0,0,.45)}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;
- font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+ font-family:-apple-system,BlinkWindows PCSystemFont,"SF Pro Text",system-ui,sans-serif}
 html{touch-action:manipulation}
 body{margin:0;background:var(--bg);color:var(--text);max-width:520px;
  margin:auto;padding:0 16px calc(96px + env(safe-area-inset-bottom)) 16px;
@@ -192,7 +192,7 @@ a{color:var(--link);text-decoration:none}
 </div>
 <details class="camp" id="pwrap"><summary><b>Products in this campaign</b>
 <small id="psum">—</small></summary><div class="inner plist" id="plist">
-<div class="dim">Mac offline — list unavailable</div></div></details>
+<div class="dim">Windows PC offline — list unavailable</div></div></details>
 </div>
 
 <div class="sec"><div class="settl">Photos</div>
@@ -202,12 +202,11 @@ a{color:var(--link);text-decoration:none}
 <img class="thumb" id="prev"><input name="photo" type="file"
  accept="image/*" style="display:none"></label>
 <label class="photorow"><span class="ic">🏷</span><span class="tx">
-<b>Shelf / price tag</b><small>Optional — fills name &amp; price for you</small>
+<b>Shelf / price tag</b><small>Optional — reference photo</small>
 </span><img class="thumb" id="prev2"><input name="tag_photo" type="file"
  accept="image/*" style="display:none"></label>
 </div>
-<div class="secfoot">With a tag photo, name and price can be left blank —
-they get read from the tag.</div></div>
+<div class="secfoot">Enter the product name and member price even if you attach a tag photo.</div></div>
 
 <div class="sec"><div class="settl">Product</div>
 <div class="card">
@@ -248,15 +247,15 @@ they get read from the tag.</div></div>
 <div class="submitbar"><button type="submit" id="sbtn">Submit Product</button>
 </div>
 <div class="meta">Submissions are saved on this phone first and reach the
-system the moment the Mac is awake — it never needs to stay on.
+system the moment the Windows PC is awake — it never needs to stay on.
 <a href="#" id="rekey">change access key</a></div>
 </form>
 
 <script>
-// the always-on shell: static on GitHub Pages; the API lives on the Mac's
-// tailnet — only reachable when the Mac is awake. Until then, submissions
+// the always-on shell: static on GitHub Pages; the API lives on the Windows PC's
+// tailnet — only reachable when the Windows PC is awake. Until then, submissions
 // queue in IndexedDB ON THE PHONE and drain automatically.
-const API='https://justdothis.tail28ccf1.ts.net';
+const API='https://desktop-n4123df.tail28ccf1.ts.net';
 const $=id=>document.getElementById(id);
 const KEYL='ek-key',CAMPL='ek-camps',LASTC='ek-last-camp';
 let KEY=localStorage.getItem(KEYL)||'';
@@ -291,8 +290,8 @@ async function reachable(){try{
 async function netStatus(){
  const on=await reachable();
  $('netst').innerHTML=on
-  ?'<span class="dot on"></span>Mac online — delivers instantly'
-  :'<span class="dot off"></span>Mac offline — saves on this phone';
+  ?'<span class="dot on"></span>Windows PC online — delivers instantly'
+  :'<span class="dot off"></span>Windows PC offline — saves on this phone';
  return on;}
 
 // ---------- campaigns ----------
@@ -341,8 +340,8 @@ async function loadProducts(slug){
     {ts:Date.now(),rows}));}}catch(e){}
  if(!rows){const c=localStorage.getItem('ek-prod-'+slug);
   if(c){try{rows=JSON.parse(c).rows;}catch(e){}
-   sum.textContent='cached — Mac offline';}}
- if(!rows){list.innerHTML='<div class="dim">Mac offline — list unavailable'+
+   sum.textContent='cached — Windows PC offline';}}
+ if(!rows){list.innerHTML='<div class="dim">Windows PC offline — list unavailable'+
   ' (open once while it\'s on to cache)</div>';sum.textContent='offline';return;}
  if(live)sum.textContent=rows.length+' product(s)';
  const grp={};
@@ -411,7 +410,7 @@ async function pending(){return withDb(d=>new Promise(res=>{
 async function badge(){const n=await pending();
  const q=$('q');
  if(q){q.textContent=n?`⏳ ${n} product(s) saved on this phone — `+
-  `syncs automatically when the Mac is awake`:'';
+  `syncs automatically when the Windows PC is awake`:'';
   q.classList.toggle('on',n>0);}
  if('setAppBadge'in navigator){try{navigator.setAppBadge(n)}catch(e){}}}
 async function drain(){
@@ -479,7 +478,7 @@ $('f').onsubmit=async e=>{
  }catch(ex){
   try{await queue(item);
    localStorage.setItem(LASTC,item.fields.campaign);
-   ok.textContent='✓ Saved on this phone — syncs when the Mac is awake.';
+   ok.textContent='✓ Saved on this phone — syncs when the Windows PC is awake.';
    ok.classList.add('on');
   }catch(qe){er.textContent='Could not save on this phone: '+qe.message;
    er.style.display='block';}
@@ -491,7 +490,7 @@ $('f').onsubmit=async e=>{
  for(const s of document.querySelectorAll('.photorow small'))
   if(s.textContent==='Tap to change')s.textContent=
    s.closest('.photorow').querySelector('input').name==='photo'?
-   'Camera or gallery':'Optional — fills name & price for you';
+   'Camera or gallery':'Optional — reference photo';
  drain();loadProducts(item.fields.campaign);
 };
 
