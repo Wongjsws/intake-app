@@ -1,4 +1,4 @@
-const C='ekoway-web-v3';
+const C='ekoway-web-v4';
 const SHELL=['./','index.html','manifest.json','icon.png'];
 self.addEventListener('install',e=>{
  e.waitUntil(caches.open(C).then(c=>c.addAll(SHELL)));

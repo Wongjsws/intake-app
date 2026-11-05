@@ -185,7 +185,6 @@ a{color:var(--link);text-decoration:none}
 <div class="sec"><div class="settl">Campaign</div>
 <div class="card">
 <div id="newcampbox">
-<button type="button" id="newcampbtn">＋ Create a new campaign</button>
 <div id="newcampfields" style="display:none">
 <div class="field"><label class="req">Campaign name</label>
 <input id="newcampname" placeholder="e.g. December Member Day"></div>
@@ -315,13 +314,24 @@ async function loadCamps(){
  if(!camps){try{camps=JSON.parse(localStorage.getItem(CAMPL)||'null');}catch(e){}}
  if(camps&&camps.length){
   localStorage.setItem(CAMPL,JSON.stringify(camps));
-  sel.innerHTML=camps.map(c=>
+  sel.innerHTML='<option value="__new__">＋ Create new campaign…</option>'+camps.map(c=>
    `<option value="${c.slug}">${c.name}${c.date?' · '+c.date:''} `+
    `(${c.products} products${c.variations?` · ${c.variations} vars`:''})`+
    `</option>`).join('');
   sel.style.display='block';ctx.style.display='none';ctx.name='';
   const last=localStorage.getItem(LASTC);
   if(last&&camps.some(c=>c.slug===last))sel.value=last;
+  sel.onchange=()=>{
+   if(sel.value==='__new__'){
+    $('newcampfields').style.display='block';
+    sel.value=localStorage.getItem(LASTC)||camps[0].slug;
+    $('newcampname').focus();
+   }else{
+    $('newcampfields').style.display='none';
+    localStorage.setItem(LASTC,sel.value);
+    loadProducts(sel.value);
+   }
+  };
  }else{
   sel.style.display='none';ctx.style.display='block';
   ctx.name='campaign';ctx.value=localStorage.getItem(LASTC)||'';
@@ -329,7 +339,6 @@ async function loadCamps(){
  loadProducts(sel.style.display==='none'?ctx.value:sel.value);}
 
 
-$('newcampbtn').onclick=()=>{$('newcampfields').style.display='block';$('newcampname').focus();};
 $('createcamp').onclick=async()=>{
  const name=$('newcampname').value.trim(),date=$('newcampdate').value.trim();
  if(!name){$('newcampname').focus();return;}
